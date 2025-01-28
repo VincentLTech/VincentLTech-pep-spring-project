@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Integer> {
-    
+    //this activates a SQL to search for the id.
     List<Message> findByPostedBy(Integer accountId);
 
 }

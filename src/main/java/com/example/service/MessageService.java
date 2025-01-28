@@ -47,7 +47,11 @@ public class MessageService {
 
         // This checks if an Account exists with the given username (postedBy)
         String username = getUsernameByAccountId(message.getPostedBy());
-        if (username == null || !accountRepository.existsByUsername(username)) {
+        if (
+            username == null //checks to see if the message is empty
+            || 
+            !accountRepository.existsByUsername(username)//or if it exists
+            ) {
             // return ResponseEntity.status(400).body(null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
@@ -72,7 +76,9 @@ public class MessageService {
 
     public ResponseEntity<Message> getMessageById(Integer messageId) {
         Optional<Message> optionalMessage = messageRepository.findById(messageId);
+        //checks to see if the message is there
         if (optionalMessage.isPresent()) {
+            
             return ResponseEntity.ok(optionalMessage.get());
         } else {
             return ResponseEntity.ok().build();
@@ -82,6 +88,7 @@ public class MessageService {
     public ResponseEntity<Object> deleteMessageById(Integer messageId) {
         // Check if the message with the given ID exists
         if (messageRepository.existsById(messageId)) {
+            //this then deletes it
             messageRepository.deleteById(messageId);
             return ResponseEntity.ok().body("1");
         } else {
@@ -93,6 +100,7 @@ public class MessageService {
         Optional<Message> optionalMessage = messageRepository.findById(messageId);
     
         if (optionalMessage.isEmpty()) {
+            // return ResponseEntity.status(400).body("Message not found");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message not found");
         }
     
@@ -100,25 +108,27 @@ public class MessageService {
     
         // Check if newMessageText is null or empty after trimming
         if (newMessageText.getMessageText() == null || newMessageText.getMessageText().trim().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                 .body("Message text cannot be empty");
+            // return ResponseEntity.status(400).body("Message text cannot be empty");
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message text cannot be empty");
         }
     
         // Check if newMessageText exceeds 255 characters
         if (newMessageText.getMessageText().length() > 255) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                 .body("Message too long: it must have a length of at most 255 characters");
+            // return ResponseEntity.status(400).body("Message too long: it must have a length of at most 255 characters");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message too long: it must have a length of at most 255 characters");
         }
     
         // Update message text and save
         message.setMessageText(newMessageText.getMessageText());
         messageRepository.save(message);
     
-        // Return success response
+        // Return success response. The "1" represents the number of rows updated which is only 1
         return ResponseEntity.ok().body("1"); // Assuming "1" represents the number of rows updated
     }
 
     public ResponseEntity<List<Message>> getMessagesByAccountId(Integer accountId) {
+        //this retrieves the message through the id you pulled.
         List<Message> messages = messageRepository.findByPostedBy(accountId);
         return ResponseEntity.ok(messages);
     }
