@@ -106,20 +106,20 @@ public class MessageService {
     
         Message message = optionalMessage.get();
     
-        // Check if newMessageText is null or empty after trimming
+        // Check if the new message is null or empty even after trimming
         if (newMessageText.getMessageText() == null || newMessageText.getMessageText().trim().isEmpty()) {
             // return ResponseEntity.status(400).body("Message text cannot be empty");
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message text cannot be empty");
         }
     
-        // Check if newMessageText exceeds 255 characters
+        // Check if the new message exceeds 255 characters
         if (newMessageText.getMessageText().length() > 255) {
             // return ResponseEntity.status(400).body("Message too long: it must have a length of at most 255 characters");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message too long: it must have a length of at most 255 characters");
         }
     
-        // Update message text and save
+        // It updates the message text and save
         message.setMessageText(newMessageText.getMessageText());
         messageRepository.save(message);
     
